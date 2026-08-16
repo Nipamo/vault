@@ -9,11 +9,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include_directories(src console)
+include_directories(src src/vault src/console)
 
 add_executable(vault
     src/main.cpp
-    src/vault.cpp
-    src/vault.h
-    console/console.cpp
+    src/vault/vault.cpp
+    src/vault/vault.h
+    src/vault/entry.h
+    src/console/console.cpp
+    src/console/console.h
 )

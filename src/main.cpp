@@ -1,11 +1,10 @@
 #include "console.h"
-#include "vault.h"
 #include <cstdlib>
-#include <memory>
 
-using src::Vault;
+using src::console::Console;
 
 int main() {
-  //   Vault::Ptr vault_ = std::make_shared<Vault>("test");
-  console::Console console_;
+  Console console_;
+
+  return 0;
 }

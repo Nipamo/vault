@@ -53,8 +53,8 @@ void Console::ListEntriesCommand() {
 
   for (const auto& entry : entries) {
     std::cout << std::left << std::setw(6) << entry.id << std::setw(24)
-              << entry.service << std::setw(28) << entry.username
-              << entry.password << "\n";
+              << entry.service << std::setw(28) << entry.username << "*****"
+              << "\n";
   }
 
   std::cout << "\n" << entries.size() << " entry(ies).\n\n";

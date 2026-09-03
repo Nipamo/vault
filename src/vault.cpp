@@ -1,9 +1,12 @@
 #include "vault.h"
 #include <string>
 
-namespace src {
+void Vault::Lock() { is_locked_ = true; }
 
-Vault::Vault(const std::string& name) : name_{std::move(name)} {}
+void Vault::Unlock() { is_locked_ = false; }
 
-auto Vault::getName() -> std::string { return name_; }
-} // namespace src
+auto Vault::IsLocked() const -> bool { return is_locked_; }
+
+auto Vault::GetMasterPassword() const -> const std::string& {
+  return master_password_;
+}

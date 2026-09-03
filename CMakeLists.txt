@@ -16,4 +16,5 @@ add_executable(vault
     src/vault.cpp
     src/vault.h
     console/console.cpp
+    src/entry.h
 )

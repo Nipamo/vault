@@ -3,18 +3,15 @@
 
 #include "vault.h"
 
-namespace console {
-
 class Console {
 public:
-  Console(src::Vault::Ptr vault = nullptr);
+  explicit Console(Vault::Ptr vault);
   void Run();
 
 private:
-  void CreateVault();
+  void AskForPasswordAndOpenVault();
 
-  src::Vault::Ptr vault_ptr_;
+  Vault::Ptr vault_;
 };
-} // namespace console
 
 #endif // CONSOLE_CONSOLE_H

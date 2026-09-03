@@ -3,20 +3,18 @@
 
 #include <memory>
 
-namespace src {
-
 class Vault {
 public:
   using Ptr = std::shared_ptr<Vault>;
 
-  explicit Vault(const std::string& name);
-
-  auto getName() -> std::string;
+  void Lock();
+  void Unlock();
+  auto IsLocked() const -> bool;
+  auto GetMasterPassword() const -> const std::string&;
 
 private:
-  std::string name_;
+  const std::string master_password_{"0000"};
+  bool is_locked_{true};
 };
-
-} // namespace src
 
 #endif // SRC_VAULT_H

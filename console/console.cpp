@@ -32,9 +32,12 @@ void Console::AddEntryCommand() {
   std::string service = ReadInputLine("Service: ");
   std::string username = ReadInputLine("Username: ");
   std::string password = ReadInputLine("Password: ");
+  std::string notes = ReadInputLine("Notes: ");
 
-  Entry new_entry = {
-      .service = service, .username = username, .password = password};
+  Entry new_entry = {.service = service,
+                     .username = username,
+                     .password = password,
+                     .notes = notes};
   vault_->AddEntry(new_entry);
 
   std::cout << "Entry added successfully!\n\n";
@@ -46,15 +49,24 @@ void Console::ListEntriesCommand() {
   std::cout << "\n--- Vault Entries ---\n\n";
 
   std::cout << std::left << std::setw(6) << "ID" << std::setw(24) << "Service"
-            << std::setw(28) << "Username"
-            << "Password\n";
+            << std::setw(28) << "Username" << std::setw(16) << "Password"
+            << std::setw(34) << "Notes"
+            << "\n";
 
-  std::cout << std::string(80, '-') << "\n";
+  std::cout << std::string(108, '-') << "\n";
 
   for (const auto& entry : entries) {
+    std::string notes = entry.notes;
+
+    constexpr std::size_t max_note_length = 31;
+
+    if (notes.length() > max_note_length) {
+      notes = notes.substr(0, max_note_length) + "...";
+    }
+
     std::cout << std::left << std::setw(6) << entry.id << std::setw(24)
-              << entry.service << std::setw(28) << entry.username << "*****"
-              << "\n";
+              << entry.service << std::setw(28) << entry.username
+              << std::setw(16) << "*****" << std::setw(34) << notes << "\n";
   }
 
   std::cout << "\n" << entries.size() << " entry(ies).\n\n";

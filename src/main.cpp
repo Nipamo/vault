@@ -1,9 +1,16 @@
+#include <cstdlib>
+#include <iostream>
+
 #include "console.h"
 #include "vault.h"
-#include <cstdlib>
 
 int main() {
   Vault::Ptr vault = std::make_shared<Vault>();
   Console console_(vault);
+
+  std::cout << "==================================\n"
+            << "          Password Vault!\n"
+            << "==================================\n\n";
+
   console_.Run();
 }

@@ -11,4 +11,4 @@ struct Entry {
   std::string notes;
 };
 
-#endif // SRC_ENTRY_H
+#endif  // SRC_ENTRY_H

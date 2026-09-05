@@ -9,12 +9,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include_directories(src console)
-
 add_executable(vault
     src/main.cpp
     src/vault.cpp
     src/vault.h
-    console/console.cpp
+    src/console/console.cpp
     src/entry.h
+    src/util/print.h
+)
+
+target_include_directories(vault PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/console
 )

@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "entry.h"
+#include "util/print.h"
 #include "vault.h"
 
 constexpr auto kCommandPrefix{"vault"};
@@ -34,23 +35,16 @@ void Console::Run() {
       if (command_iterator != command_map_.end()) {
         command_iterator->second.action_();
       } else {
-        std::cout << "Invalid command index. Please try again.\n";
+        util::PrintErrorMessage("Invalid command index. Please try again.\n");
       }
     } catch (const std::invalid_argument&) {
-      std::cout << "Invalid input. Please enter a valid command index.\n";
+      util::PrintErrorMessage(
+          "Invalid input. Please enter a valid command index.\n");
     } catch (const std::out_of_range&) {
-      std::cout << "Input out of range. Please enter a valid command index.\n";
+      util::PrintErrorMessage(
+          "Input out of range. Please enter a valid command index.\n");
     }
   }
-}
-
-void Console::PrintMenu() {
-  std::cout << "Available commands:\n";
-  for (const auto& command : command_map_) {
-    std::cout << command.first << " - " << command.second.description_ << "\n";
-  }
-
-  std::cout << "\n";
 }
 
 void Console::CreateAddEntryCommand() {
@@ -87,23 +81,32 @@ void Console::CreateExitCommand() {
 
 void Console::AskForPasswordAndOpenVault() {
   if (vault_->IsLocked()) {
-    std::cout << "Vault is locked.\n\n"
-              << "Master password: ";
+    util::PrintInfoMessage("Vault is locked.\n\nMaster password: ");
+
     do {
       std::string input_password;
       std::getline(std::cin, input_password);
       if (input_password == vault_->GetMasterPassword()) {
         vault_->Unlock();
-        std::cout << "Vault unlocked!\n\n";
+        util::PrintSuccessMessage("Vault unlocked!\n\n");
       } else {
-        std::cout << "Wrong password! Try again: ";
+        util::PrintErrorMessage("Wrong password! Try again:");
       }
     } while (vault_->IsLocked());
   }
 }
 
+void Console::PrintMenu() {
+  util::PrintCommandHeader("Command Menu");
+  for (const auto& command : command_map_) {
+    std::cout << command.first << " - " << command.second.description_ << "\n";
+  }
+
+  std::cout << "\n";
+}
+
 void Console::AddEntryCommand() {
-  std::cout << "--- Add Entry ---\n\n";
+  util::PrintCommandHeader("Add Entry");
 
   std::string service = ReadInputLine("Service: ");
   std::string username = ReadInputLine("Username: ");
@@ -116,13 +119,18 @@ void Console::AddEntryCommand() {
                      .notes = notes};
   vault_->AddEntry(new_entry);
 
-  std::cout << "Entry added successfully!\n\n";
+  util::PrintSuccessMessage("Entry added successfully!\n\n");
 }
 
 void Console::ListEntriesCommand() {
   const auto& entries = vault_->GetEntries();
 
-  std::cout << "\n--- Vault Entries ---\n\n";
+  if (entries.empty()) {
+    util::PrintInfoMessage("No entries found.\n\n");
+    return;
+  }
+
+  util::PrintCommandHeader("List Entries");
 
   std::cout << std::left << std::setw(6) << "ID" << std::setw(24) << "Service"
             << std::setw(28) << "Username" << std::setw(16) << "Password"
@@ -133,6 +141,7 @@ void Console::ListEntriesCommand() {
 
   for (const auto& entry : entries) {
     std::string notes = entry.notes;
+    std::string password_masked = std::string(entry.password.length(), '*');
 
     constexpr std::size_t max_note_length = 31;
 
@@ -142,10 +151,15 @@ void Console::ListEntriesCommand() {
 
     std::cout << std::left << std::setw(6) << entry.id << std::setw(24)
               << entry.service << std::setw(28) << entry.username
-              << std::setw(16) << "*****" << std::setw(34) << notes << "\n";
+              << std::setw(16) << password_masked << std::setw(34) << notes
+              << "\n";
   }
+  std::cout << "\n";
 
-  std::cout << "\n" << entries.size() << " entry(ies).\n\n";
+  std::string entry_label = entries.size() == 1 ? "entry" : "entries";
+  std::ostringstream message_stream;
+  message_stream << entries.size() << " " << entry_label << ".\n\n";
+  util::PrintInfoMessage(message_stream.str());
 }
 
 auto Console::ReadInputLine(const std::string& prompt) -> std::string& {

@@ -8,9 +8,9 @@ int main() {
   Vault::Ptr vault = std::make_shared<Vault>();
   Console console_(vault);
 
-  std::cout << "==================================\n"
-            << "          Password Vault!\n"
-            << "==================================\n\n";
+  std::cout << "----------------------------------------\n"
+            << "             PASSWORD VAULT\n"
+            << "----------------------------------------\n\n";
 
   console_.Run();
 }

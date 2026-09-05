@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <map>
-#include <vector>
 
 #include "vault.h"
 

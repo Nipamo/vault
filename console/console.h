@@ -9,6 +9,9 @@ public:
   void Run();
 
 private:
+  auto ReadInputLine(const std::string& prompt) -> std::string&;
+  void AddEntryCommand();
+  void ListEntriesCommand();
   void AskForPasswordAndOpenVault();
 
   Vault::Ptr vault_;

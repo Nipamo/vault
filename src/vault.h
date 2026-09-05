@@ -1,7 +1,9 @@
 #ifndef SRC_VAULT_H
 #define SRC_VAULT_H
 
+#include "entry.h"
 #include <memory>
+#include <vector>
 
 class Vault {
 public:
@@ -11,9 +13,12 @@ public:
   void Unlock();
   auto IsLocked() const -> bool;
   auto GetMasterPassword() const -> const std::string&;
+  auto GetEntries() const -> const std::vector<Entry>&;
+  void AddEntry(Entry& entry);
 
 private:
   const std::string master_password_{"0000"};
+  std::vector<Entry> entries_;
   bool is_locked_{true};
 };
 

@@ -1,9 +1,11 @@
 #include "console.h"
-#include "entry.h"
-#include "vault.h"
+
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+
+#include "entry.h"
+#include "vault.h"
 
 constexpr auto kCommandPrefix{"vault"};
 

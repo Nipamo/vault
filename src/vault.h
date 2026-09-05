@@ -1,12 +1,13 @@
 #ifndef SRC_VAULT_H
 #define SRC_VAULT_H
 
-#include "entry.h"
 #include <memory>
 #include <vector>
 
+#include "entry.h"
+
 class Vault {
-public:
+ public:
   using Ptr = std::shared_ptr<Vault>;
 
   void Lock();
@@ -16,10 +17,10 @@ public:
   auto GetEntries() const -> const std::vector<Entry>&;
   void AddEntry(Entry& entry);
 
-private:
+ private:
   const std::string master_password_{"0000"};
   std::vector<Entry> entries_;
   bool is_locked_{true};
 };
 
-#endif // SRC_VAULT_H
+#endif  // SRC_VAULT_H

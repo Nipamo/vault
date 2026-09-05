@@ -4,11 +4,11 @@
 #include "vault.h"
 
 class Console {
-public:
+ public:
   explicit Console(Vault::Ptr vault);
   void Run();
 
-private:
+ private:
   auto ReadInputLine(const std::string& prompt) -> std::string&;
   void AddEntryCommand();
   void ListEntriesCommand();
@@ -17,4 +17,4 @@ private:
   Vault::Ptr vault_;
 };
 
-#endif // CONSOLE_CONSOLE_H
+#endif  // CONSOLE_CONSOLE_H

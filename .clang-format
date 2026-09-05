@@ -1,3 +1,2 @@
-BasedOnStyle: LLVM
-
-PointerAlignment: Left
+BasedOnStyle: Google
+IndentWidth: 2

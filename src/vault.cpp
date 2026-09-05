@@ -1,4 +1,5 @@
 #include "vault.h"
+
 #include <string>
 
 void Vault::Lock() { is_locked_ = true; }

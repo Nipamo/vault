@@ -1,16 +1,10 @@
 #ifndef CONSOLE_CONSOLE_H
 #define CONSOLE_CONSOLE_H
 
-#include <functional>
 #include <map>
 
+#include "i_command.h"
 #include "vault.h"
-
-struct Command {
-  std::string name_;
-  std::string description_;
-  std::function<void()> action_;
-};
 
 class Console {
  public:
@@ -18,21 +12,14 @@ class Console {
   void Run();
 
  private:
+  void InitCommands();
+  void UnlockVault();
+  void TryExecuteCommand(const int& index);
+  auto ValidatePassword(const std::string& password) -> bool;
   void PrintMenu();
 
-  void CreateAddEntryCommand();
-  void CreateListEntriesCommand();
-  void CreateMenuCommand();
-  void CreateExitCommand();
-
-  void AskForPasswordAndOpenVault();
-  void AddEntryCommand();
-  void ListEntriesCommand();
-  auto ReadInputLine(const std::string& prompt) -> std::string&;
-
   Vault::Ptr vault_;
-  int command_index_{0};
-  std::map<int, Command> command_map_;
+  std::map<int, ICommand::Ptr> command_map_;
 };
 
 #endif  // CONSOLE_CONSOLE_H

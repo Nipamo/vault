@@ -15,12 +15,23 @@ auto Vault::GetMasterPassword() const -> const std::string& {
 
 auto Vault::GetEntries() const -> const std::vector<Entry>& { return entries_; }
 
-auto Vault::GetEntryById(const int& id) -> Entry* {
+auto Vault::GetEntryById(const int& entry_id) -> Entry* {
   // IDs start at 1 and indexes at 0
-  return &entries_[id - 1];
+  return &entries_[entry_id - 1];
 }
 
 void Vault::AddEntry(Entry& entry) {
   entry.id = entries_.size() + 1;
   entries_.push_back(entry);
+}
+
+auto Vault::DeleteEntryById(const int& entry_id) -> bool {
+  try {
+    // IDs start at 1 and indexes at 0
+    const auto& delete_id = entry_id - 1;
+    entries_.erase(entries_.begin() + delete_id);
+    return true;
+  } catch (...) {
+    return false;
+  }
 }

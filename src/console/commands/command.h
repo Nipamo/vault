@@ -12,7 +12,7 @@ class Command : public ICommand {
 
   Command() = default;
   Command(const std::string& name, const std::string& description,
-          Function action)
+          Function action = {})
       : ICommand(name, description), action_(action) {}
 
   void Execute() override;

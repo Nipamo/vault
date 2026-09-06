@@ -15,7 +15,13 @@ class Vault {
   auto IsLocked() const -> bool;
   auto GetMasterPassword() const -> const std::string&;
   auto GetEntries() const -> const std::vector<Entry>&;
+  auto GetEntryById(const int& id) -> Entry*;
   void AddEntry(Entry& entry);
+
+  void SetEntryService(const std::string& service);
+  void SetEntryUsername(const std::string& username);
+  void SetEntryPassword(const std::string& password);
+  void SetEntryNote(const std::string& note);
 
  private:
   const std::string master_password_{"0000"};

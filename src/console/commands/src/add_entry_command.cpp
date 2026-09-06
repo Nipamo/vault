@@ -13,12 +13,12 @@ auto CreateEntryFromInput() {
   std::string service = Command::ReadInputLine("Service: ");
   std::string username = Command::ReadInputLine("Username: ");
   std::string password = Command::ReadInputLine("Password: ");
-  std::string notes = Command::ReadInputLine("Notes: ");
+  std::string note = Command::ReadInputLine("Note: ");
 
   Entry new_entry = {.service = service,
                      .username = username,
                      .password = password,
-                     .notes = notes};
+                     .note = note};
 
   return new_entry;
 }
@@ -33,7 +33,15 @@ void AddEntryCommand::Execute() {
 
   Entry new_entry;
   new_entry = CreateEntryFromInput();
+
+  if (!new_entry.IsValid()) {
+    util::PrintErrorMessage(
+        "Invalid entry. Service and at least one additional attribute "
+        "must contain information.\n\n");
+    return;
+  }
+
   vault_->AddEntry(new_entry);
 
-  util::PrintSuccessMessage("\nEntry added successfully!\n\n");
+  util::PrintSuccessMessage("Entry added successfully!\n\n");
 }

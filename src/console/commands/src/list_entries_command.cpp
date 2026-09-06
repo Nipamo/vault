@@ -15,22 +15,22 @@ namespace {
 void PrintTableHeader() {
   std::cout << std::left << std::setw(6) << "ID" << std::setw(24) << "Service"
             << std::setw(28) << "Username" << std::setw(16) << "Password"
-            << std::setw(34) << "Notes"
+            << std::setw(34) << "Note"
             << "\n";
   std::cout << std::string(108, '-') << "\n";
 }
 
 void PrintTableEntry(const Entry& entry) {
   std::string password_masked = std::string(entry.password.length(), '*');
-  std::string notes = entry.notes;
+  std::string note = entry.note;
 
-  if (notes.length() > kMaxPrintedNoteLength) {
-    notes = notes.substr(0, kMaxPrintedNoteLength) + "...";
+  if (note.length() > kMaxPrintedNoteLength) {
+    note = note.substr(0, kMaxPrintedNoteLength) + "...";
   }
 
   std::cout << std::left << std::setw(6) << entry.id << std::setw(24)
             << entry.service << std::setw(28) << entry.username << std::setw(16)
-            << password_masked << std::setw(34) << notes << "\n";
+            << password_masked << std::setw(34) << note << "\n";
 }
 
 }  // namespace
@@ -57,9 +57,10 @@ void ListEntriesCommand::Execute() {
 
 void ListEntriesCommand::PrintEntryAmount() {
   const auto& entries = vault_->GetEntries();
+  std::cout << "\n";
   std::string entry_label = entries.size() == 1 ? "entry" : "entries";
   std::ostringstream message_stream;
-  message_stream << entries.size() << " " << entry_label << ".\n\n";
+  message_stream << entries.size() << " " << entry_label << " found.\n\n";
   util::PrintInfoMessage(message_stream.str());
   std::cout << "\n";
 }

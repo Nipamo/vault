@@ -2,9 +2,11 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
 #include "command.h"
 #include "commands/include/add_entry_command.h"
+#include "commands/include/edit_entry_command.h"
 #include "commands/include/list_entries_command.h"
 #include "util/print.h"
 #include "vault.h"
@@ -18,6 +20,8 @@ void Console::InitCommands() {
 
   AddEntryCommand::Ptr add_entry_command_ =
       std::make_shared<AddEntryCommand>(vault_);
+  EditEntryCommand::Ptr edit_entry_command =
+      std::make_shared<EditEntryCommand>(vault_);
   ListEntriesCommand::Ptr list_entries_command_ =
       std::make_shared<ListEntriesCommand>(vault_);
   Command::Ptr menu_command = std::make_shared<Command>(
@@ -26,6 +30,7 @@ void Console::InitCommands() {
       "exit", "Exit the application", []() { std::exit(0); });
 
   command_map_[++command_index] = add_entry_command_;
+  command_map_[++command_index] = edit_entry_command;
   command_map_[++command_index] = list_entries_command_;
   command_map_[++command_index] = menu_command;
   command_map_[++command_index] = exit_command;

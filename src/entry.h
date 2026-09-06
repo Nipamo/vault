@@ -1,6 +1,7 @@
 #ifndef SRC_ENTRY_H
 #define SRC_ENTRY_H
 
+#include <ostream>
 #include <string>
 
 // The entry needs to contain the Service and at least one additional attribute.
@@ -29,5 +30,14 @@ struct Entry {
            note == other.note;
   }
 };
+
+inline std::ostream& operator<<(std::ostream& output, const Entry& entry) {
+  auto password_masked = std::string(entry.password.length(), '*');
+  return output << "ID: " << entry.id << "\n"
+                << "Service: " << entry.service << "\n"
+                << "Username: " << entry.username << "\n"
+                << "Password: " << password_masked << "\n"
+                << "Note: " << entry.note;
+}
 
 #endif  // SRC_ENTRY_H

@@ -1,5 +1,6 @@
 #include "vault.h"
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,11 @@ auto Vault::GetEntries() const -> const std::vector<Entry>& { return entries_; }
 
 auto Vault::GetEntryById(const int& entry_id) -> Entry* {
   // IDs start at 1 and indexes at 0
+  if (entries_.size() <= entry_id) {
+    throw std::out_of_range("Tried to access Vault-Entries of size " +
+                            std::to_string(entries_.size()) + " with index " +
+                            std::to_string(entry_id) + "!");
+  }
   return &entries_[entry_id - 1];
 }
 

@@ -19,6 +19,7 @@ add_executable(vault
     src/console/commands/src/list_entries_command.cpp
     src/console/commands/src/edit_entry_command.cpp
     src/console/commands/src/delete_entry_command.cpp
+    src/console/commands/src/search_entry_command.cpp
     src/entry.h
     src/util/print.h
 )

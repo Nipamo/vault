@@ -13,7 +13,7 @@ class Console {
 
  private:
   void InitCommands();
-  void UnlockVault();
+  auto UnlockVault() -> bool;
   void TryExecuteCommand(const int& index);
   auto ValidatePassword(const std::string& password) -> bool;
   void PrintMenu();

@@ -1,8 +1,13 @@
 #include "console.h"
 
 #include <cstdlib>
+#include <exception>
+#include <fstream>
 #include <iostream>
 #include <memory>
+#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
+#include <stdexcept>
 
 #include "command.h"
 #include "commands/include/add_entry_command.h"
@@ -10,10 +15,16 @@
 #include "commands/include/edit_entry_command.h"
 #include "commands/include/list_entries_command.h"
 #include "commands/include/search_entry_command.h"
+#include "file_handler.h"
 #include "util/print.h"
 #include "vault.h"
 
-constexpr auto kCommandPrefix{"vault"};
+static constexpr auto kCommandPrefix{"vault"};
+static constexpr auto kSavedDataPath{"../user.json"};
+static constexpr auto kUsernameTag{"username"};
+static constexpr auto kPasswordTag{"password"};
+
+using json = nlohmann::json;
 
 Console::Console(Vault::Ptr vault) : vault_(vault) { InitCommands(); }
 
@@ -47,9 +58,11 @@ void Console::InitCommands() {
 void Console::Run() {
   while (true) {
     // Only print the menu right after accessing the vault. Not after each input
-    if (vault_->IsLocked()) {
-      UnlockVault();
-      PrintMenu();
+    while (vault_->IsLocked()) {
+      if (UnlockVault()) {
+        vault_->Unlock();
+        PrintMenu();
+      }
     }
 
     std::string input_command = Command::ReadInputLine("Select a command: ");
@@ -67,16 +80,57 @@ void Console::Run() {
   }
 }
 
-void Console::UnlockVault() {
-  util::PrintInfoMessage("Vault is locked.\n\nMaster password: ");
+// void Console::UnlockVault() {
+//   util::PrintInfoMessage("Vault is locked.\n\nMaster password: ");
 
-  do {
-    std::string input;
-    std::getline(std::cin, input);
-    if (ValidatePassword(input)) {
-      vault_->Unlock();
+//   do {
+//     std::string input;
+//     std::getline(std::cin, input);
+//     if (ValidatePassword(input)) {
+//       vault_->Unlock();
+//     }
+//   } while (vault_->IsLocked());
+// }
+
+auto Console::UnlockVault() -> bool {
+  json new_user_json;
+  FileHandler file_handler(kSavedDataPath);
+  json user_info;
+  file_handler.GetFile() >> user_info;
+
+  util::PrintInfoMessage("Vault is locked.\n\n");
+
+  std::cout << "Username: ";
+  std::string username_input;
+  std::getline(std::cin, username_input);
+
+  if (user_info.contains(kUsernameTag) &&
+      user_info[kUsernameTag] == username_input) {
+    std::cout << "Password: ";
+    std::string password_input;
+    std::getline(std::cin, password_input);
+    if (user_info.contains(kPasswordTag) &&
+        user_info[kPasswordTag] == password_input) {
+      util::PrintSuccessMessage("Unlocked vault!\n");
+      return true;
+    } else {
+      util::PrintErrorMessage("Wrong password!\n");
+      return false;
     }
-  } while (vault_->IsLocked());
+  }
+
+  util::PrintInfoMessage("Creating new account!\n");
+  new_user_json[kUsernameTag] = username_input;
+
+  std::cout << "Password: ";
+  std::string password_input;
+  std::getline(std::cin, password_input);
+
+  new_user_json[kPasswordTag] = password_input;
+
+  file_handler.GetFile() << std::setw(2) << new_user_json << "\n";
+
+  return true;
 }
 
 void Console::PrintMenu() {

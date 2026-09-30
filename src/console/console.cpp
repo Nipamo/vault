@@ -1,8 +1,7 @@
 #include "console.h"
 
 #include <cstdlib>
-#include <exception>
-#include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <nlohmann/json.hpp>
@@ -15,16 +14,8 @@
 #include "commands/include/edit_entry_command.h"
 #include "commands/include/list_entries_command.h"
 #include "commands/include/search_entry_command.h"
-#include "file_handler.h"
 #include "util/print.h"
 #include "vault.h"
-
-static constexpr auto kCommandPrefix{"vault"};
-static constexpr auto kSavedDataPath{"../user.json"};
-static constexpr auto kUsernameTag{"username"};
-static constexpr auto kPasswordTag{"password"};
-
-using json = nlohmann::json;
 
 Console::Console(Vault::Ptr vault) : vault_(vault) { InitCommands(); }
 
@@ -80,55 +71,47 @@ void Console::Run() {
   }
 }
 
-// void Console::UnlockVault() {
-//   util::PrintInfoMessage("Vault is locked.\n\nMaster password: ");
-
-//   do {
-//     std::string input;
-//     std::getline(std::cin, input);
-//     if (ValidatePassword(input)) {
-//       vault_->Unlock();
-//     }
-//   } while (vault_->IsLocked());
-// }
-
 auto Console::UnlockVault() -> bool {
-  json new_user_json;
-  FileHandler file_handler(kSavedDataPath);
-  json user_info;
-  file_handler.GetFile() >> user_info;
-
   util::PrintInfoMessage("Vault is locked.\n\n");
 
   std::cout << "Username: ";
   std::string username_input;
   std::getline(std::cin, username_input);
 
-  if (user_info.contains(kUsernameTag) &&
-      user_info[kUsernameTag] == username_input) {
+  if (user_handler_.UsernameExists(username_input)) {
     std::cout << "Password: ";
     std::string password_input;
     std::getline(std::cin, password_input);
-    if (user_info.contains(kPasswordTag) &&
-        user_info[kPasswordTag] == password_input) {
+    if (user_handler_.ValidatePassword(username_input, password_input)) {
       util::PrintSuccessMessage("Unlocked vault!\n");
       return true;
-    } else {
-      util::PrintErrorMessage("Wrong password!\n");
-      return false;
     }
+
+    util::PrintErrorMessage("Wrong password!\n");
+    return false;
   }
 
-  util::PrintInfoMessage("Creating new account!\n");
-  new_user_json[kUsernameTag] = username_input;
+  std::cout << "Create new account? (y/N): ";
+  std::string input;
+  std::getline(std::cin, input);
+
+  if (input == "y") {
+    return CreateNewAccount();
+  }
+
+  return false;
+}
+
+auto Console::CreateNewAccount() -> bool {
+  std::cout << "Username: ";
+  std::string username;
+  std::getline(std::cin, username);
 
   std::cout << "Password: ";
-  std::string password_input;
-  std::getline(std::cin, password_input);
+  std::string password;
+  std::getline(std::cin, password);
 
-  new_user_json[kPasswordTag] = password_input;
-
-  file_handler.GetFile() << std::setw(2) << new_user_json << "\n";
+  user_handler_.CreateNewAccount(username, password);
 
   return true;
 }

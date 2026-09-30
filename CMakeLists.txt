@@ -12,7 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(vault
     src/main.cpp
     src/vault.cpp
-    src/vault.h
+    src/user_handler.cpp
     src/console/console.cpp
     src/console/file_handler.cpp
     src/console/commands/command.cpp

@@ -1,17 +1,19 @@
 #ifndef CONSOLE_FILE_HANDLER_H
 #define CONSOLE_FILE_HANDLER_H
 
+#include <filesystem>
 #include <fstream>
 
 class FileHandler {
  public:
-  explicit FileHandler(const std::string& path);
+  explicit FileHandler(const std::filesystem::path& path);
   ~FileHandler();
 
-  auto GetFile() -> std::fstream&;
+  auto GetFile() const -> std::fstream&;
+  auto IsFileEmpty() const -> bool;
 
  private:
-  std::fstream file_;
+  mutable std::fstream file_;
 };
 
 #endif  // CONSOLE_FILE_HANDLER_H

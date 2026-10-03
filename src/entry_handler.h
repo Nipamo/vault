@@ -7,17 +7,16 @@
 
 class EntryHandler {
  public:
-  EntryHandler();
+  static auto GetEntries() -> std::vector<Entry::Ptr>;
+  static auto GetEntryById(int entry_id) -> Entry::Ptr;
   static void AddEntry(const Entry& title, const int& user_id);
-  static void ListEntries();
   static void ViewEntry(int entry_id);
   static void DeleteEntry(int entry_id);
+  static void UpdateEntry(const Entry::Ptr& entry);
 
  private:
-  static auto LoadEntriesFromFile() -> std::vector<Entry>;
+  static auto LoadEntriesFromFile() -> std::vector<Entry::Ptr>;
   static void SaveEntriesToFile();
-
-  static std::vector<Entry> entries_;
 };
 
 #endif  // SRC_ENTRY_HANDLER_H

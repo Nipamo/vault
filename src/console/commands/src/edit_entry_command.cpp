@@ -1,5 +1,7 @@
 #include "include/edit_entry_command.h"
 
+#include <entry_handler.h>
+
 #include "entry.h"
 #include "util/print.h"
 #include "util/string.h"
@@ -16,10 +18,10 @@ void EditEntryCommand::Execute() {
   util::PrintCommandHeader(kCommandHeader);
 
   try {
-    std::string input_id = ReadInputLine("Select an entry (ID): ");
-    int selected_id = std::stoi(input_id);
-    Entry* selected_entry = vault_->GetEntryById(selected_id);
-    Entry original_entry = *selected_entry;
+    auto input_id = ReadInputLine("Select an entry (ID): ");
+    auto selected_id = std::stoi(input_id);
+    auto selected_entry = EntryHandler::GetEntryById(selected_id);
+    auto original_entry = *selected_entry;
 
     util::PrintInfoMessage(
         "Service and one additional attribute needs to contain "
@@ -38,9 +40,10 @@ void EditEntryCommand::Execute() {
       return;
     }
 
-    if (*selected_entry == original_entry) {
+    if (*(selected_entry) == original_entry) {
       util::PrintInfoMessage("Nothing to change!\n\n");
     } else {
+      EntryHandler::UpdateEntry(selected_entry);
       util::PrintSuccessMessage("Updated entry successfully!\n\n");
     }
   } catch (const std::invalid_argument&) {
@@ -51,7 +54,7 @@ void EditEntryCommand::Execute() {
   }
 }
 
-void EditEntryCommand::UpdateEntryService(Entry* entry) {
+void EditEntryCommand::UpdateEntryService(Entry::Ptr entry) {
   std::string service;
   std::cout << "Service: " << entry->service << "\n";
   std::cout << "New service (empty keeps the current value): ";
@@ -62,7 +65,7 @@ void EditEntryCommand::UpdateEntryService(Entry* entry) {
   }
 }
 
-void EditEntryCommand::UpdateEntryUsername(Entry* entry) {
+void EditEntryCommand::UpdateEntryUsername(Entry::Ptr entry) {
   std::string username;
   std::cout << "Username: " << entry->username << "\n";
   std::cout << "New username (empty keeps the current value): ";
@@ -73,7 +76,7 @@ void EditEntryCommand::UpdateEntryUsername(Entry* entry) {
   }
 }
 
-void EditEntryCommand::UpdateEntryPassword(Entry* entry) {
+void EditEntryCommand::UpdateEntryPassword(Entry::Ptr entry) {
   std::string password;
   std::cout << "Password: " << entry->password << "\n";
   std::cout << "New password (empty keeps the current value): ";
@@ -84,7 +87,7 @@ void EditEntryCommand::UpdateEntryPassword(Entry* entry) {
   }
 }
 
-void EditEntryCommand::UpdateEntryNote(Entry* entry) {
+void EditEntryCommand::UpdateEntryNote(Entry::Ptr entry) {
   std::string note;
   std::cout << "Note: " << entry->note << "\n";
   std::cout << "New note (empty keeps the current value): ";

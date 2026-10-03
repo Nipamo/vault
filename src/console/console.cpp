@@ -1,7 +1,6 @@
 #include "console.h"
 
 #include <cstdlib>
-#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <nlohmann/json.hpp>
@@ -83,6 +82,8 @@ auto Console::UnlockVault() -> bool {
     std::string password_input;
     std::getline(std::cin, password_input);
     if (user_handler_.ValidatePassword(username_input, password_input)) {
+      const auto user_id = UserHandler::GetUserIdByUsername(username_input);
+      vault_->SetUserId(user_id);
       util::PrintSuccessMessage("Unlocked vault!\n");
       return true;
     }
@@ -112,6 +113,7 @@ auto Console::CreateNewAccount() -> bool {
   std::getline(std::cin, password);
 
   user_handler_.CreateNewAccount(username, password);
+  vault_->SetUserId(user_handler_.GetUserIdByUsername(username));
 
   return true;
 }

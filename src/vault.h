@@ -14,20 +14,14 @@ class Vault {
   void Unlock();
   auto IsLocked() const -> bool;
   auto GetMasterPassword() const -> const std::string&;
-  auto GetEntries() const -> const std::vector<Entry>&;
-  auto GetEntryById(const int& entry_id) -> Entry*;
-  void AddEntry(Entry& entry);
-  auto DeleteEntryById(const int& entry_id) -> bool;
 
-  void SetEntryService(const std::string& service);
-  void SetEntryUsername(const std::string& username);
-  void SetEntryPassword(const std::string& password);
-  void SetEntryNote(const std::string& note);
+  static void SetUserId(const int user_id);
+  static auto GetUserId() -> int;
 
  private:
   const std::string master_password_{"0000"};
-  std::vector<Entry> entries_;
   bool is_locked_{true};
+  static int user_id_;
 };
 
 #endif  // SRC_VAULT_H

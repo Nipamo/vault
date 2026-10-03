@@ -1,6 +1,9 @@
 #include "include/add_entry_command.h"
 
+#include <user_handler.h>
+
 #include "entry.h"
+#include "entry_handler.h"
 #include "util/print.h"
 
 static constexpr auto kCommandName{"add"};
@@ -10,10 +13,10 @@ static constexpr auto kCommandHeader{"Add Entry"};
 namespace {
 
 auto CreateEntryFromInput() {
-  std::string service = Command::ReadInputLine("Service: ");
-  std::string username = Command::ReadInputLine("Username: ");
-  std::string password = Command::ReadInputLine("Password: ");
-  std::string note = Command::ReadInputLine("Note: ");
+  auto service = Command::ReadInputLine("Service: ");
+  auto username = Command::ReadInputLine("Username: ");
+  auto password = Command::ReadInputLine("Password: ");
+  auto note = Command::ReadInputLine("Note: ");
 
   Entry new_entry = {.service = service,
                      .username = username,
@@ -41,7 +44,12 @@ void AddEntryCommand::Execute() {
     return;
   }
 
-  vault_->AddEntry(new_entry);
+  auto user_id = vault_->GetUserId();
+  if (!UserHandler::UserIdExists(user_id)) {
+    util::PrintErrorMessage("Invalid user ID. Cannot add entry.\n\n");
+    return;
+  }
+  EntryHandler::AddEntry(new_entry, user_id);
 
   util::PrintSuccessMessage("Entry added successfully!\n\n");
 }

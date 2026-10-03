@@ -1,5 +1,7 @@
 #include "include/list_entries_command.h"
 
+#include <entry_handler.h>
+
 #include <iomanip>
 #include <iostream>
 
@@ -20,17 +22,18 @@ void PrintTableHeader() {
   std::cout << std::string(108, '-') << "\n";
 }
 
-void PrintTableEntry(const Entry& entry) {
-  std::string password_masked = std::string(entry.password.length(), '*');
-  std::string note = entry.note;
+void PrintTableEntry(const Entry::Ptr& entry) {
+  std::string password_masked = std::string(entry->password.length(), '*');
+  std::string note = entry->note;
 
   if (note.length() > kMaxPrintedNoteLength) {
     note = note.substr(0, kMaxPrintedNoteLength) + "...";
   }
 
-  std::cout << std::left << std::setw(6) << entry.id << std::setw(24)
-            << entry.service << std::setw(28) << entry.username << std::setw(16)
-            << password_masked << std::setw(34) << note << "\n";
+  std::cout << std::left << std::setw(6) << entry->entry_id << std::setw(24)
+            << entry->service << std::setw(28) << entry->username
+            << std::setw(16) << password_masked << std::setw(34) << note
+            << "\n";
 }
 
 }  // namespace
@@ -39,7 +42,7 @@ ListEntriesCommand::ListEntriesCommand(Vault::Ptr vault)
     : Command(kCommandName, kCommandDescription, {}), vault_(vault) {}
 
 void ListEntriesCommand::Execute() {
-  const auto& entries = vault_->GetEntries();
+  const auto& entries = EntryHandler::GetEntries();
 
   if (entries.empty()) {
     util::PrintInfoMessage("No entries found.\n\n");
@@ -56,7 +59,7 @@ void ListEntriesCommand::Execute() {
 }
 
 void ListEntriesCommand::PrintEntryAmount() {
-  const auto& entries = vault_->GetEntries();
+  const auto& entries = EntryHandler::GetEntries();
   std::cout << "\n";
   std::string entry_label = entries.size() == 1 ? "entry" : "entries";
   std::ostringstream message_stream;

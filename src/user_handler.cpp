@@ -1,7 +1,5 @@
 #include "user_handler.h"
 
-#include <filesystem>
-#include <iomanip>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
 
@@ -9,10 +7,7 @@
 #include "util/print.h"
 
 using Json = nlohmann::json;
-using Path = std::filesystem::path;
 
-static const auto kSavedDataPath =
-    Path(__FILE__).parent_path().parent_path() / "user.json";
 static constexpr auto kUsersTag{"users"};
 static constexpr auto kIdTag{"user_id"};
 static constexpr auto kUsernameTag{"username"};
@@ -46,6 +41,25 @@ auto UserHandler::UsernameExists(const std::string& username) -> bool {
   return GetUserInfoFromFile(username).username == username;
 }
 
+auto UserHandler::UserIdExists(const int& user_id) -> bool {
+  std::vector<UserInfo> users = GetAllUsersFromFile();
+  for (const auto& user : users) {
+    if (user.user_id == user_id) {
+      return true;
+    }
+  }
+  return false;
+}
+
+auto UserHandler::GetUserIdByUsername(const std::string& username) -> int {
+  const auto user = GetUserInfoFromFile(username);
+  if (user.username != username) {
+    return 0;
+  }
+
+  return user.user_id;
+}
+
 auto UserHandler::ValidatePassword(const std::string& username,
                                    const std::string& password) -> bool {
   const auto user_info = GetUserInfoFromFile(username);
@@ -62,19 +76,6 @@ auto UserHandler::ValidatePassword(const std::string& username,
   return false;
 }
 
-auto UserHandler::GetFileJson() -> Json {
-  FileHandler file_handler(kSavedDataPath);
-  Json user_infos;
-
-  if (file_handler.IsFileEmpty()) {
-    user_infos = Json::object();
-  } else {
-    file_handler.GetFile().seekg(0);
-    file_handler.GetFile() >> user_infos;
-  }
-  return user_infos;
-}
-
 auto UserHandler::GetUserInfoFromFile(const std::string& username) -> UserInfo {
   std::vector<UserInfo> users = GetAllUsersFromFile();
   for (const auto& user_info : users) {
@@ -87,7 +88,8 @@ auto UserHandler::GetUserInfoFromFile(const std::string& username) -> UserInfo {
 }
 
 auto UserHandler::GetAllUsersFromFile() -> std::vector<UserInfo> {
-  Json user_infos = GetFileJson();
+  FileHandler file_handler;
+  Json user_infos = file_handler.GetFileJson();
   std::vector<UserInfo> users;
 
   if (!user_infos.contains(kUsersTag) || !user_infos[kUsersTag].is_array()) {
@@ -103,7 +105,8 @@ auto UserHandler::GetAllUsersFromFile() -> std::vector<UserInfo> {
 }
 
 void UserHandler::WriteUserInfoToFile(const UserInfo& user_info) {
-  Json user_infos = GetFileJson();
+  FileHandler file_handler;
+  Json user_infos = file_handler.GetFileJson();
   if (!user_infos.contains(kUsersTag) || !user_infos[kUsersTag].is_array()) {
     user_infos[kUsersTag] = Json::array();
   }
@@ -112,13 +115,7 @@ void UserHandler::WriteUserInfoToFile(const UserInfo& user_info) {
   ToJson(new_user_info, user_info);
   user_infos[kUsersTag].push_back(new_user_info);
 
-  std::ofstream output_file(kSavedDataPath, std::ios::out | std::ios::trunc);
-  if (!output_file.is_open()) {
-    throw std::runtime_error("Failed opening file for writing!\n");
-  }
-
-  output_file << std::setw(2) << user_infos << '\n';
-  output_file.flush();
+  file_handler.SaveJson(user_infos);
 }
 
 void UserHandler::ToJson(Json& json, const UserInfo& user_info) {

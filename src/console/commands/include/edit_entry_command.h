@@ -10,10 +10,10 @@ class EditEntryCommand : public Command {
   void Execute() final;
 
  private:
-  void UpdateEntryService(Entry* entry);
-  void UpdateEntryUsername(Entry* entry);
-  void UpdateEntryPassword(Entry* entry);
-  void UpdateEntryNote(Entry* entry);
+  void UpdateEntryService(Entry::Ptr entry);
+  void UpdateEntryUsername(Entry::Ptr entry);
+  void UpdateEntryPassword(Entry::Ptr entry);
+  void UpdateEntryNote(Entry::Ptr entry);
 
   Vault::Ptr vault_;
 };

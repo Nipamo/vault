@@ -15,16 +15,17 @@ class UserHandler {
  public:
   void CreateNewAccount(const std::string& username,
                         const std::string& password);
-  auto UsernameExists(const std::string& username) -> bool;
+  static auto UsernameExists(const std::string& username) -> bool;
+  static auto UserIdExists(const int& user_id) -> bool;
+  static auto GetUserIdByUsername(const std::string& username) -> int;
   auto ValidatePassword(const std::string& username,
                         const std::string& password) -> bool;
   void ToJson(nlohmann::json& json, const UserInfo& user_info);
-  void FromJson(const nlohmann::json& json, UserInfo& user_info);
+  static void FromJson(const nlohmann::json& json, UserInfo& user_info);
 
  private:
-  auto GetFileJson() -> nlohmann::json;
-  auto GetUserInfoFromFile(const std::string& username) -> UserInfo;
-  auto GetAllUsersFromFile() -> std::vector<UserInfo>;
+  static auto GetUserInfoFromFile(const std::string& username) -> UserInfo;
+  static auto GetAllUsersFromFile() -> std::vector<UserInfo>;
   void WriteUserInfoToFile(const UserInfo& user_info);
 };
 

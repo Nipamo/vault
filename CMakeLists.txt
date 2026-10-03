@@ -13,6 +13,7 @@ add_executable(vault
     src/main.cpp
     src/vault.cpp
     src/user_handler.cpp
+    src/entry_handler.cpp
     src/console/console.cpp
     src/console/file_handler.cpp
     src/console/commands/command.cpp

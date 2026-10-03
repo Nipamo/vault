@@ -1,5 +1,7 @@
 #include "include/search_entry_command.h"
 
+#include <entry_handler.h>
+
 #include <cctype>
 #include <stdexcept>
 
@@ -35,16 +37,16 @@ void SearchEntryCommand::Execute() {
 
     if (IsNumber(input)) {
       auto selected_id = std::stoi(input);
-      std::cout << *(vault_->GetEntryById(selected_id)) << "\n";
+      std::cout << *EntryHandler::GetEntryById(selected_id) << "\n";
     } else {
       auto found_entry = false;
-      for (const auto& entry : vault_->GetEntries()) {
+      for (const auto& entry : EntryHandler::GetEntries()) {
         if (found_entry) {
           std::cout << "--------------\n";
         }
 
-        if (entry.service == input) {
-          std::cout << entry << "\n";
+        if (entry->service == input) {
+          std::cout << *entry << "\n";
           found_entry = true;
         }
       }
